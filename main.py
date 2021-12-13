@@ -5,7 +5,7 @@ import aiohttp
 import aioconsole
 
 #Token here
-token = "OTE5Mzg4NTQ3MTU1MzY5OTk0.YbVFTw.0nnxHnRvQpTSS-bBBFsEjjNsZV0"
+token = "BOT TOKEN HERE"
 prefix = "!"
 hook = True
 
@@ -35,7 +35,7 @@ async def help(ctx):
     await ctx.message.delete()
     em = discord.Embed(title="OMEGA NUKEBOT", description="Commands are listed below")
     for command in bot.walk_commands():
-        em.add_field(name=f"{command.name}", value=f"{command.description}", inline=False)
+        em.add_field(name=f"`{prefix}{command.name}`", value=f"{command.description}", inline=False)
     em.set_image(url="https://cdn.discordapp.com/attachments/918348753193283654/919751805280325702/omega.gif")
     em.set_footer(text="𝗢𝗠𝗘𝗚𝗔 𝗡𝗨𝗞𝗘𝗕𝗢𝗧 | 𝗠𝗔𝗗𝗘 𝗕𝗬 𝗦𝗛𝗘𝗟𝗟")
     em.set_author(name=f"OMEGA NUKEBOT", icon_url="https://cdn.discordapp.com/attachments/918348753193283654/919751805280325702/omega.gif")
